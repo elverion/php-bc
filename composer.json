@@ -1,0 +1,19 @@
+{
+    "name": "elverion/php-bc",
+    "type": "library",
+    "require-dev": {
+        "phpunit/phpunit": "^10.3",
+        "symfony/var-dumper": "^6.3"
+    },
+    "license": "Creative Commons Zero 1.0 Universal",
+    "autoload": {
+        "psr-4": {
+            "Elverion\\PhpBc\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    }
+}
