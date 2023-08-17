@@ -27,6 +27,12 @@ class NumberTest extends TestCase
         self::assertSame($expected, (string) $number);
     }
 
+    public function test_can_set_precision()
+    {
+        $num = new BcNumber(1.123456789, 9);
+        self::assertSame((string) $num, "1.123456789");
+    }
+
     public static function comparisons(): array
     {
         return [
@@ -126,7 +132,6 @@ class NumberTest extends TestCase
         self::assertSame($expectated, (string) $result);
     }
 
-
     public static function squares(): array
     {
         return [
@@ -141,6 +146,20 @@ class NumberTest extends TestCase
     {
         $result = (new BcNumber($input))->sqrt();
 
+        self::assertSame($expectated, (string) $result);
+    }
+
+    public static function modulos(): array
+    {
+        return [
+            [10, 3, "1.000000"]
+        ];
+    }
+
+    /** @dataProvider modulos */
+    public function test_can_modulo(mixed $left, mixed $right, string $expectated)
+    {
+        $result = (new BcNumber($left))->mod($right);
         self::assertSame($expectated, (string) $result);
     }
 
