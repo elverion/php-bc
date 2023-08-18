@@ -10,6 +10,8 @@ _exact_ values, not "close enough." Dealing with money, for example.
 # Usage
 
 ```php
+use Elverion\PhpBc\Math\BcNumber;
+
 $salesTaxPercent = '10.39';
 $itemPrices = [
     '1249.99',
@@ -103,5 +105,5 @@ BC version: 100000
 
 # Best practices
 
-- Values passed as input to `BcNumber` constructor or methods **should** be passed as **strings** rather than floats. While a float is a valid input, this _could_ lead to floating-point inaccuracies as previously described
+- Values passed as input to `BcNumber` constructor or methods **should** be passed as **strings** rather than floats. While a float is a valid input, this _could_ lead to floating-point inaccuracies from prior to the data being converted to a `BcNumber`.
 - Calculations this way are inherently slower, especially when run in tight loops, so do not use `BcNumber` when the accuracy isn't required but speed is.
