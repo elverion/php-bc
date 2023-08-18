@@ -5,7 +5,7 @@ namespace Tests\Unit;
 use Elverion\PhpBc\Math\BcNumber;
 use PHPUnit\Framework\TestCase;
 
-class NumberTest extends TestCase
+class BcNumberTest extends TestCase
 {
     public static function instantiables(): array
     {
