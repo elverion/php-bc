@@ -165,10 +165,25 @@ class NumberTest extends TestCase
 
     public function test_can_round()
     {
-        self::assertSame((new BcNumber(1.2345))->round(), "1.23");
-        self::assertSame((new BcNumber(1234.5555))->round(), "1234.56");
-        self::assertSame((new BcNumber(1.23450))->round(4), "1.2345");
-        self::assertSame((new BcNumber(1.2))->round(6), "1.200000");
+        self::assertSame("1.23", (new BcNumber(1.2345))->round()); // round down
+        self::assertSame("1234.56", (new BcNumber(1234.5555))->round()); // round up
+        self::assertSame("1.2345", (new BcNumber(1.23450))->round(4)); // 4 places - no trailing
+        self::assertSame("1.200000", (new BcNumber(1.2))->round(6)); // 6 places - trailing 0s
+    }
+
+    public function test_can_floor()
+    {
+        self::assertSame("1.23", (new BcNumber(1.2345))->floor());
+        self::assertSame("1234.55", (new BcNumber(1234.5555))->floor());
+        self::assertSame("1.2345", (new BcNumber(1.23456))->floor(4));
+    }
+
+    public function test_can_ceil()
+    {
+        self::assertSame("1.24", (new BcNumber(1.2345))->ceil());
+        self::assertSame("1234.00", (new BcNumber(1234.0))->ceil());
+        self::assertSame("1234.001", (new BcNumber(1234.0001))->ceil(3));
+        self::assertSame("1.2346", (new BcNumber(1.23456))->ceil(4));
     }
 
     public function test_chains()

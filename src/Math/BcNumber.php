@@ -48,11 +48,44 @@ class BcNumber
     }
 
     /**
-     * Rounds the value for a given precision point. For example 1.234 rounded with 2 precision = 1.23
+     * Returns the rounded value for a given precision point. For example 1.234 rounded with 2 precision = 1.23
+     * Does *NOT* modify the underlying value.
      */
     public function round(int $precision = 2)
     {
-        return sprintf("%0.{$precision}f", $this->value);
+        return sprintf("%0.{$precision}f", round($this->value, $precision));
+    }
+
+    /**
+     * Returns the rounded-down value for a given precision point. For example 1.555 rounded with 2 precision = 1.55
+     * Does *NOT* modify the underlying value.
+     */
+    public function floor(int $precision = 2)
+    {
+        // Subtract some small piece that would cause round() to round down.
+        // The number of zeros must be proportional to our precision.
+        // For example, to round-down to 2 decimal places, we'd need to subtract 0.005
+        $floorBy = '0.' . str_repeat(0, $precision) . '5';
+        $val = bcsub((string) $this->value, $floorBy, $precision + 1);
+
+        return sprintf("%0.{$precision}f", round($val, $precision));
+    }
+
+    /**
+     * Returns the rounded-up value for a given precision point. For example 1.111 rounded with 2 precision = 1.12
+     * Does *NOT* modify the underlying value.
+     */
+    public function ceil(int $precision = 2)
+    {
+        // Add some small piece that would cause round() to round up.
+        // See notes in floor().
+        // Additionally, we suffix with 4 instead of 5 to prevent accidentally over-rounding
+        // for numbers like 1.0.
+        // ie. precision = 2 : (1.0 + 0.005) = 1.005, rounded to 2 decimal places would result in 1.01, instead of 1.0
+        $floorBy = '0.' . str_repeat(0, $precision) . '4';
+        $val = bcadd((string) $this->value, $floorBy, $precision + 1);
+
+        return sprintf("%0.{$precision}f", round($val, $precision));
     }
 
     /**
