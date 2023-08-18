@@ -4,13 +4,24 @@ namespace Elverion\PhpBc\Math;
 
 class BcNumber
 {
+    protected const PRECISION_FOR_CALCULATIONS = 20;
     protected string $value;
-    protected ?int $precision;
+    protected int $precision;
 
-    public function __construct(self|float|string $from = 0, ?int $precision = 6)
+    public function __construct(self|float|string $from = 0)
     {
         $this->value = $this->convertFrom($from);
-        $this->precision = $precision;
+        $this->precision = $this->guessPrecision($this->value);
+    }
+
+    protected static function guessPrecision(string $value): int
+    {
+        $dotPos = strrpos($value, '.');
+        if ($dotPos === false) {
+            return 0;
+        }
+
+        return strlen(rtrim($value, '0')) - $dotPos - 1;
     }
 
     /**
@@ -28,7 +39,7 @@ class BcNumber
 
     public function __toString(): string
     {
-        return $this->value;
+        return sprintf("%0.{$this->precision}f", $this->value);
     }
 
     /**
@@ -36,7 +47,7 @@ class BcNumber
      */
     protected function doOperation(string $op, string $left, string $right)
     {
-        return $op($left, $right, $this->precision);
+        return $op($left, $right, static::PRECISION_FOR_CALCULATIONS);
     }
 
     /**
@@ -44,7 +55,7 @@ class BcNumber
      */
     public function equals(self|float|string $value): bool
     {
-        return bccomp((string) $this, $this->convertFrom($value), $this->precision) === 0;
+        return bccomp((string) $this, $this->convertFrom($value), static::PRECISION_FOR_CALCULATIONS) === 0;
     }
 
     /**
@@ -79,9 +90,9 @@ class BcNumber
     {
         // Add some small piece that would cause round() to round up.
         // See notes in floor().
-        // Additionally, we suffix with 4 instead of 5 to prevent accidentally over-rounding
-        // for numbers like 1.0.
+        // Additionally, we suffix with 4 instead of 5 to prevent accidentally over-rounding for numbers like 1.0.
         // ie. precision = 2 : (1.0 + 0.005) = 1.005, rounded to 2 decimal places would result in 1.01, instead of 1.0
+        // Alternatively, could use '5' with PHP_ROUND_HALF_DOWN
         $floorBy = '0.' . str_repeat(0, $precision) . '4';
         $val = bcadd((string) $this->value, $floorBy, $precision + 1);
 
@@ -93,8 +104,7 @@ class BcNumber
      */
     public function add(self|float|string $value): static
     {
-        $this->value = $this->doOperation('bcadd', $this, $this->convertFrom($value));
-        return $this;
+        return new static($this->doOperation('bcadd', $this, $this->convertFrom($value)));
     }
 
     /**
@@ -102,8 +112,7 @@ class BcNumber
      */
     public function sub(self|float|string $value): static
     {
-        $this->value = $this->doOperation('bcsub', $this, $this->convertFrom($value));
-        return $this;
+        return new static($this->doOperation('bcsub', $this, $this->convertFrom($value)));
     }
 
     /**
@@ -111,8 +120,7 @@ class BcNumber
      */
     public function mul(self|float|string $value): static
     {
-        $this->value = $this->doOperation('bcmul', $this, $this->convertFrom($value));
-        return $this;
+        return new static($this->doOperation('bcmul', $this, $this->convertFrom($value)));
     }
 
     /**
@@ -128,8 +136,7 @@ class BcNumber
      */
     public function div(self|float|string $value): static
     {
-        $this->value = $this->doOperation('bcdiv', $this, $this->convertFrom($value));
-        return $this;
+        return new static($this->doOperation('bcdiv', $this, $this->convertFrom($value)));
     }
 
     /**
@@ -137,8 +144,7 @@ class BcNumber
      */
     public function mod(self|float|string $value): static
     {
-        $this->value = $this->doOperation('bcmod', $this, $this->convertFrom($value));
-        return $this;
+        return new static($this->doOperation('bcmod', $this, $this->convertFrom($value)));
     }
 
     /**
@@ -146,8 +152,7 @@ class BcNumber
      */
     public function pow(self|float|string $value): static
     {
-        $this->value = $this->doOperation('bcpow', $this, $this->convertFrom($value));
-        return $this;
+        return new static($this->doOperation('bcpow', $this, $this->convertFrom($value)));
     }
 
     /**
@@ -155,7 +160,6 @@ class BcNumber
      */
     public function sqrt(): static
     {
-        $this->value = bcsqrt($this, $this->precision);
-        return $this;
+        return new static(bcsqrt($this, static::PRECISION_FOR_CALCULATIONS));
     }
 }

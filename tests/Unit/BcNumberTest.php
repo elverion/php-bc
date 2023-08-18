@@ -27,10 +27,10 @@ class BcNumberTest extends TestCase
         self::assertSame($expected, (string) $number);
     }
 
-    public function testCanSetPrecision()
+    public function testPrecisionGrowsAutomatically()
     {
-        $num = new BcNumber(1.123456789, 9);
-        self::assertSame((string) $num, "1.123456789");
+        $num = (new BcNumber('1'))->add('0.1')->add('0.02');
+        self::assertSame((string) $num, "1.12");
     }
 
     public static function comparisons(): array
@@ -51,8 +51,8 @@ class BcNumberTest extends TestCase
     public static function addables(): array
     {
         return [
-            ['0', '1', "1.000000"],
-            ['-1', '1', "0.000000"],
+            ['0', '1', "1"],
+            ['-1', '1', "0"],
         ];
     }
 
@@ -67,9 +67,9 @@ class BcNumberTest extends TestCase
     public static function subtractables(): array
     {
         return [
-            ['0', '1', "-1.000000"],
-            ['-1', '1', "-2.000000"],
-            ['50.03', '45.42', "4.610000"], // In floats, would be 4.609999999999999 -- an error
+            ['0', '1', "-1"],
+            ['-1', '1', "-2"],
+            ['50.03', '45.42', "4.61"], // In floats, would be 4.609999999999999 -- an error
         ];
     }
 
@@ -84,9 +84,10 @@ class BcNumberTest extends TestCase
     public static function multipliables(): array
     {
         return [
-            ['0', '1', "0.000000"],
-            ['-1', '5', "-5.000000"],
-            ['2', '500', "1000.000000"],
+            ['0', '1', "0"],
+            ['-1', '5', "-5"],
+            ['2', '500', "1000"],
+            ['1.25', '2', '2.5'],
         ];
     }
 
@@ -101,9 +102,9 @@ class BcNumberTest extends TestCase
     public static function dividables(): array
     {
         return [
-            ['0', '1', "0.000000"],
-            ['1', '5', "0.200000"],
-            ['100', '2', "50.000000"]
+            ['0', '1', "0"],
+            ['1', '5', "0.2"],
+            ['100', '2', "50"]
         ];
     }
 
@@ -118,9 +119,9 @@ class BcNumberTest extends TestCase
     public static function powers(): array
     {
         return [
-            ['1', '10', "1.000000"],
-            ['3', '3', "27.000000"],
-            ['1.2345', '6', "3.539537"],
+            ['1', '10', "1"],
+            ['3', '3', "27"],
+            ['1.2345', '6', "3.53953788908662492219"],
         ];
     }
 
@@ -135,9 +136,9 @@ class BcNumberTest extends TestCase
     public static function squares(): array
     {
         return [
-            ['1', "1.000000"],
-            ['2', "1.414213"],
-            ['198236', "445.237015"],
+            ['1', "1"],
+            ['2', "1.4142135623730951455"],
+            ['198236', "445.23701553217699711240"],
         ];
     }
 
@@ -152,7 +153,8 @@ class BcNumberTest extends TestCase
     public static function modulos(): array
     {
         return [
-            ['10', '3', "1.000000"]
+            ['10', '3', '1'],
+            ['17', '1.5', '0.5']
         ];
     }
 
