@@ -21,13 +21,13 @@ class BcNumberTest extends TestCase
     }
 
     /** @dataProvider instantiables */
-    public function test_can_instantiate_from(mixed $input, $expected)
+    public function testCanInstantiateFrom(mixed $input, $expected)
     {
         $number = new BcNumber($input);
         self::assertSame($expected, (string) $number);
     }
 
-    public function test_can_set_precision()
+    public function testCanSetPrecision()
     {
         $num = new BcNumber(1.123456789, 9);
         self::assertSame((string) $num, "1.123456789");
@@ -36,13 +36,13 @@ class BcNumberTest extends TestCase
     public static function comparisons(): array
     {
         return [
-            [10, "10.000000"],
+            ['10', "10.000000"],
             [0.1 + 0.2, "0.3000000"], // Would be false if floats
         ];
     }
 
     /** @dataProvider comparisons */
-    public function test_can_compare($left, $right)
+    public function testCanCompare($left, $right)
     {
         $result = (new BcNumber($left))->equals($right);
         self::assertTrue($result);
@@ -51,13 +51,13 @@ class BcNumberTest extends TestCase
     public static function addables(): array
     {
         return [
-            [0, 1, "1.000000"],
-            [-1, 1, "0.000000"],
+            ['0', '1', "1.000000"],
+            ['-1', '1', "0.000000"],
         ];
     }
 
     /** @dataProvider addables */
-    public function test_can_add(mixed $left, mixed $right, string $expectated)
+    public function testCanAdd(mixed $left, mixed $right, string $expectated)
     {
         $result = (new BcNumber($left))->add($right);
 
@@ -67,14 +67,14 @@ class BcNumberTest extends TestCase
     public static function subtractables(): array
     {
         return [
-            [0, 1, "-1.000000"],
-            [-1, 1, "-2.000000"],
-            [50.03, 45.42, "4.610000"], // In floats, would be 4.609999999999999 -- an error
+            ['0', '1', "-1.000000"],
+            ['-1', '1', "-2.000000"],
+            ['50.03', '45.42', "4.610000"], // In floats, would be 4.609999999999999 -- an error
         ];
     }
 
     /** @dataProvider subtractables */
-    public function test_can_subtract(mixed $left, mixed $right, string $expectated)
+    public function testCanSubtract(mixed $left, mixed $right, string $expectated)
     {
         $result = (new BcNumber($left))->sub($right);
 
@@ -84,14 +84,14 @@ class BcNumberTest extends TestCase
     public static function multipliables(): array
     {
         return [
-            [0, 1, "0.000000"],
-            [-1, 5, "-5.000000"],
-            [2, 500, "1000.000000"],
+            ['0', '1', "0.000000"],
+            ['-1', '5', "-5.000000"],
+            ['2', '500', "1000.000000"],
         ];
     }
 
     /** @dataProvider multipliables */
-    public function test_can_multiply(mixed $left, mixed $right, string $expectated)
+    public function testCanMultiply(mixed $left, mixed $right, string $expectated)
     {
         $result = (new BcNumber($left))->mul($right);
 
@@ -101,14 +101,14 @@ class BcNumberTest extends TestCase
     public static function dividables(): array
     {
         return [
-            [0, 1, "0.000000"],
-            [1, 5, "0.200000"],
-            [100, 2, "50.000000"]
+            ['0', '1', "0.000000"],
+            ['1', '5', "0.200000"],
+            ['100', '2', "50.000000"]
         ];
     }
 
     /** @dataProvider dividables */
-    public function test_can_divide(mixed $left, mixed $right, string $expectated)
+    public function testCanDivide(mixed $left, mixed $right, string $expectated)
     {
         $result = (new BcNumber($left))->div($right);
 
@@ -118,14 +118,14 @@ class BcNumberTest extends TestCase
     public static function powers(): array
     {
         return [
-            [1, 10, "1.000000"],
-            [3, 3, "27.000000"],
-            [1.2345, 6, "3.539537"],
+            ['1', '10', "1.000000"],
+            ['3', '3', "27.000000"],
+            ['1.2345', '6', "3.539537"],
         ];
     }
 
     /** @dataProvider powers */
-    public function test_can_power(mixed $num, mixed $exponent, string $expectated)
+    public function testCanPower(mixed $num, mixed $exponent, string $expectated)
     {
         $result = (new BcNumber($num))->pow($exponent);
 
@@ -135,14 +135,14 @@ class BcNumberTest extends TestCase
     public static function squares(): array
     {
         return [
-            [1, "1.000000"],
-            [2, "1.414213"],
-            [198236, "445.237015"],
+            ['1', "1.000000"],
+            ['2', "1.414213"],
+            ['198236', "445.237015"],
         ];
     }
 
     /** @dataProvider squares */
-    public function test_can_square_root(mixed $input, string $expectated)
+    public function testCanSquareRoot(mixed $input, string $expectated)
     {
         $result = (new BcNumber($input))->sqrt();
 
@@ -152,18 +152,18 @@ class BcNumberTest extends TestCase
     public static function modulos(): array
     {
         return [
-            [10, 3, "1.000000"]
+            ['10', '3', "1.000000"]
         ];
     }
 
     /** @dataProvider modulos */
-    public function test_can_modulo(mixed $left, mixed $right, string $expectated)
+    public function testCanModulo(mixed $left, mixed $right, string $expectated)
     {
         $result = (new BcNumber($left))->mod($right);
         self::assertSame($expectated, (string) $result);
     }
 
-    public function test_can_round()
+    public function testCanRound()
     {
         self::assertSame("1.23", (new BcNumber(1.2345))->round()); // round down
         self::assertSame("1234.56", (new BcNumber(1234.5555))->round()); // round up
@@ -171,14 +171,14 @@ class BcNumberTest extends TestCase
         self::assertSame("1.200000", (new BcNumber(1.2))->round(6)); // 6 places - trailing 0s
     }
 
-    public function test_can_floor()
+    public function testCanFloor()
     {
         self::assertSame("1.23", (new BcNumber(1.2345))->floor());
         self::assertSame("1234.55", (new BcNumber(1234.5555))->floor());
         self::assertSame("1.2345", (new BcNumber(1.23456))->floor(4));
     }
 
-    public function test_can_ceil()
+    public function testCanCeil()
     {
         self::assertSame("1.24", (new BcNumber(1.2345))->ceil());
         self::assertSame("1234.00", (new BcNumber(1234.0))->ceil());
@@ -186,7 +186,7 @@ class BcNumberTest extends TestCase
         self::assertSame("1.2346", (new BcNumber(1.23456))->ceil(4));
     }
 
-    public function test_chains()
+    public function testChains()
     {
         // 0.1 + 0.2 == 0.3 -- false if in floats
         self::assertTrue((new BcNumber(0.1))
